@@ -376,7 +376,7 @@ view: audience_overview {
     group_label: "Sessions Per User"
     type: number
     sql: (1.0 * ${current_period_sessions} / ${current_period_total_users}) ;;
-    value_format: "0.00%"
+    value_format: "0.00"
 
   }
 
@@ -385,7 +385,7 @@ view: audience_overview {
     group_label: "Sessions Per User"
     type: number
     sql: (1.0 *${previous_period_sessions} / ${previous_period_total_users}) ;;
-    value_format: "0.00%"
+    value_format: "0.00"
   }
 
   measure: sessions_per_user_pop_change {
