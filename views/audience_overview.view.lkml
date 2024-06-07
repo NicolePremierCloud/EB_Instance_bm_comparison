@@ -138,7 +138,7 @@ view: audience_overview {
   dimension: day_index {
     type: number
     view_label: "Date_Axis"
-    sql: Row_number() over(partition by ${period_selected} order by ${date} asc ;;
+    sql: Row_number() over(partition by ${period_selected} order by ${date} asc) ;;
   }
 
   ## ------------------ END DIMENSIONS TO PLOT ------------------ ##
