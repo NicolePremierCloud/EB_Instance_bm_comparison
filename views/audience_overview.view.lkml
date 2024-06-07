@@ -24,9 +24,9 @@ view: audience_overview {
       device.language  AS language,
       trafficSource.campaign,
       CASE
-        WHEN {% condition first_period_filter %} CAST(date AS TIMESTAMP) {% endcondition %}
+        WHEN {% condition first_period_filter %} CAST(PARSE_DATE("%Y%m%d", date) AS TIMESTAMP) {% endcondition %}
         THEN 'First Period'
-        WHEN {% condition second_period_filter %} CAST(date AS TIMESTAMP) {% endcondition %}
+        WHEN {% condition second_period_filter %} CAST(PARSE_DATE("%Y%m%d", date) AS TIMESTAMP) {% endcondition %}
         THEN 'Second Period'
       END AS audience_overview_period_selected,
       ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
