@@ -69,6 +69,7 @@ view: audience_overview {
   }
 
 
+
   ## ------------------ USER FILTERS  ------------------ ##
 
   filter: first_period_filter {
@@ -131,6 +132,13 @@ view: audience_overview {
     description: "Select for Comparison (Pivot)"
     type: string
     sql: ${TABLE}.audience_overview_period_selected;;
+  }
+
+
+  dimension: day_index {
+    type: number
+    view_label: "Date_Axis"
+    sql: Row_number() over(partition by ${period_selected} order by ${date} asc ;;
   }
 
   ## ------------------ END DIMENSIONS TO PLOT ------------------ ##
