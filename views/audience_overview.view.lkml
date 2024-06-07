@@ -149,7 +149,7 @@ view: audience_overview {
 
   dimension: date {
     type: date
-    sql: PARSE_DATE("%Y%m%d", ${TABLE}.date);;
+    sql: ${TABLE}.date;;
   }
 
   dimension: stream_id {
