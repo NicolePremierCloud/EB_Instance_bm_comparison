@@ -4,30 +4,13 @@ view: audience_overview {
     sql:
     SELECT
       PARSE_DATE("%Y%m%d", date) as date,
+      PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) as TABLE_SUFFIX,
       3016209496 as stream_id,
       hits.page.hostname as hostname,
-      --hits.page.pagetitle as pagetitle,
-      --hits.page.pagepath as pagepath,
-      --hits.page.pagepathLevel1 as pagepathLevel1,
-      --hits.page.pagepathLevel2 as pagepathLevel2,
-      --hits.page.pagepathLevel3 as pagepathLevel3,
-      --hits.page.pagepathLevel4 as pagepathLevel4,
-      --hits.type as hit_type,
-      --hits.eventinfo.eventlabel as event_name,
-      --hits.eventinfo.eventvalue as event_value,
       device.deviceCategory as category,
-      --device.browser,
-      --device.operatingsystem as operating_system,
-      --device.operatingsystemversion as operating_system_version,
       geoNetwork.country,
-      --geoNetwork.region,
-      --geoNetwork.city,
-      --geoNetwork.continent,
       CONCAT(trafficsource.source, ' / ', trafficsource.medium) as source_medium,
-      --COALESCE(trafficsource.source, '(direct)') AS session_source,
-      --COALESCE(trafficsource.medium, '(not set)') AS session_medium,
       FullvisitorID as UserID,
-      --ChannelGrouping as Channel_Grouping,
       visitNumber,
       totals.visits,
       totals.pageviews,
@@ -39,10 +22,23 @@ view: audience_overview {
           ELSE 'Returning User'
       END AS user_type,
       device.language  AS language,
-      ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
-      trafficSource.campaign
+      trafficSource.campaign,
+      CASE
+        WHEN {% condition first_period_filter %} CAST(date AS TIMESTAMP) {% endcondition %}
+        THEN 'First Period'
+        WHEN {% condition second_period_filter %} CAST(date AS TIMESTAMP) {% endcondition %}
+        THEN 'Second Period'
+      END AS audience_overview_period_selected,
     FROM `eb-seo.102352566.ga_sessions_*` as ga_sessions,
     UNNEST(hits) as hits
+    Where(      CASE
+        WHEN {% condition first_period_filter %} CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP) {% endcondition %}
+        THEN 'First Period'
+        WHEN {% condition second_period_filter %} CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP) {% endcondition %}
+        THEN 'Second Period'
+    END) is not null
+
+
            ;;
   }
 
@@ -92,39 +88,39 @@ view: audience_overview {
 
   ## ------------------ START HIDDEN HELPER DIMENSIONS  ------------------ ##
 
-  dimension: days_from_start_first {
-    view_label: "_PoP"
-    hidden: yes
-    type: number
-    sql: date_diff({% date_start first_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  }
+  #dimension: days_from_start_first {
+  #  view_label: "_PoP"
+  #  hidden: yes
+  #  type: number
+  #  sql: date_diff({% date_start first_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
+  #}
 
-  dimension: days_from_start_second {
-    view_label: "_PoP"
-    hidden: yes
-    type: number
-    sql: date_diff({% date_start second_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  }
+  #dimension: days_from_start_second {
+  #  view_label: "_PoP"
+  #  hidden: yes
+  #  type: number
+  #  sql: date_diff({% date_start second_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
+  #}
 
   ## ------------------ END HIDDEN HELPER DIMENSIONS  ------------------ ##
 
 
   ## ------------------ DIMENSIONS TO PLOT ------------------ ##
 
-  dimension: days_from_first_period {
-    view_label: "_PoP"
-    description: "Select for Grouping (Rows)"
-    group_label: "Arbitrary Period Comparisons"
-    type: number
-    hidden: yes
-    sql:
-            CASE
-            WHEN ${days_from_start_second} >= 0
-            THEN ${days_from_start_second}
-            WHEN ${days_from_start_first} >= 0
-            THEN ${days_from_start_first}
-            END;;
-  }
+  #dimension: days_from_first_period {
+  #  view_label: "_PoP"
+  #  description: "Select for Grouping (Rows)"
+  #  group_label: "Arbitrary Period Comparisons"
+  #  type: number
+  #  hidden: yes
+  #  sql:
+  #          CASE
+  #          WHEN ${days_from_start_second} >= 0
+  #          THEN ${days_from_start_second}
+  #          WHEN ${days_from_start_first} >= 0
+  #          THEN ${days_from_start_first}
+  #          END;;
+  #}
 
 
   dimension: period_selected {
@@ -133,13 +129,7 @@ view: audience_overview {
     label: "First or second period"
     description: "Select for Comparison (Pivot)"
     type: string
-    sql:
-      CASE
-        WHEN {% condition first_period_filter %} CAST(${created_date} AS TIMESTAMP) {% endcondition %}
-        THEN 'First Period'
-        WHEN {% condition second_period_filter %} CAST(${created_date} AS TIMESTAMP) {% endcondition %}
-        THEN 'Second Period'
-      END ;;
+    sql: ${TABLE}.audience_overview_period_selected;;
   }
 
   ## ------------------ END DIMENSIONS TO PLOT ------------------ ##
