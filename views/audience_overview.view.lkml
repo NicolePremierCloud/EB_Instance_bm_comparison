@@ -41,7 +41,7 @@ view: audience_overview {
       device.language  AS language,
       ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
       trafficSource.campaign
-    FROM `eb-seo.58859086.ga_sessions_*` as ga_sessions,
+    FROM `eb-seo.275140453.ga_sessions_*` as ga_sessions,
     UNNEST(hits) as hits
            ;;
   }
