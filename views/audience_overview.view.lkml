@@ -90,39 +90,39 @@ view: audience_overview {
 
   ## ------------------ START HIDDEN HELPER DIMENSIONS  ------------------ ##
 
-  #dimension: days_from_start_first {
-  #  view_label: "_PoP"
-  #  hidden: yes
-  #  type: number
-  #  sql: date_diff({% date_start first_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  #}
+  dimension: days_from_start_first {
+    view_label: "_PoP"
+    hidden: yes
+    type: number
+    sql: date_diff({% date_start first_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
+  }
 
-  #dimension: days_from_start_second {
-  #  view_label: "_PoP"
-  #  hidden: yes
-  #  type: number
-  #  sql: date_diff({% date_start second_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  #}
+  dimension: days_from_start_second {
+    view_label: "_PoP"
+    hidden: yes
+    type: number
+    sql: date_diff({% date_start second_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
+  }
 
   ## ------------------ END HIDDEN HELPER DIMENSIONS  ------------------ ##
 
 
   ## ------------------ DIMENSIONS TO PLOT ------------------ ##
 
-  #dimension: days_from_first_period {
-  #  view_label: "_PoP"
-  #  description: "Select for Grouping (Rows)"
-  #  group_label: "Arbitrary Period Comparisons"
-  #  type: number
-  #  hidden: yes
-  #  sql:
-  #          CASE
-  #          WHEN ${days_from_start_second} >= 0
-  #          THEN ${days_from_start_second}
-  #          WHEN ${days_from_start_first} >= 0
-  #          THEN ${days_from_start_first}
-  #          END;;
-  #}
+  dimension: days_from_first_period {
+    view_label: "_PoP"
+    description: "Select for Grouping (Rows)"
+    group_label: "Arbitrary Period Comparisons"
+    type: number
+    hidden: yes
+    sql:
+            CASE
+            WHEN ${days_from_start_second} >= 0
+            THEN ${days_from_start_second}
+            WHEN ${days_from_start_first} >= 0
+            THEN ${days_from_start_first}
+            END;;
+  }
 
 
   dimension: period_selected {
