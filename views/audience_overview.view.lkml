@@ -45,6 +45,7 @@ view: audience_overview {
         THEN 'Second Period'
       END AS audience_overview_period_selected,
       ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
+      1 as record,
     FROM `eb-seo.102352566.ga_sessions_*` as ga_sessions,
     UNNEST(hits) as hits
     Where(      CASE
@@ -416,14 +417,16 @@ view: audience_overview {
   measure: current_period_total_events {
     view_label: "Measures"
     group_label: "Total Events"
-    type: count_distinct
+    type: sum
+    sql: ${TABLE}.record ;;
     filters: [period_selected: "Second Period"]
   }
 
   measure: previous_period_total_events {
     view_label: "Measures"
     group_label: "Total Events"
-    type: count_distinct
+    type: sum
+    sql: ${TABLE}.record ;;
     filters: [period_selected: "First Period"]
   }
 
@@ -439,7 +442,8 @@ view: audience_overview {
   measure: total_events_overall {
     view_label: "Measures"
     group_label: "Total Events"
-    type: count_distinct
+    type: sum
+    sql: ${TABLE}.record ;;
   }
 
   measure: current_period_sessions_per_user {
@@ -685,7 +689,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Bounce Rate"
     type: number
-    sql: IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END), 0) / IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0) ;;
+    sql: IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END) / SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0) ;;
     value_format: "0.00%"
   }
 
