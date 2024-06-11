@@ -215,6 +215,10 @@ view: audience_overview {
     type: string
     sql: ${TABLE}.referral_path;;
   }
+  dimension: Landing_Page {
+    type: string
+    sql: ${TABLE}.Landing_page;;
+  }
 
   dimension: event_category {
     type: string
