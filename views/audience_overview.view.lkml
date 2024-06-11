@@ -446,7 +446,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Sessions Per User"
     type: number
-    sql: (1.0 * ${current_period_sessions} / ${current_period_total_users}) ;;
+    sql: ${current_period_sessions} / ${current_period_total_users} ;;
     value_format: "0.00"
 
   }
@@ -455,7 +455,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Sessions Per User"
     type: number
-    sql: (1.0 *${previous_period_sessions} / ${previous_period_total_users}) ;;
+    sql: ${previous_period_sessions} / ${previous_period_total_users} ;;
     value_format: "0.00"
   }
 
@@ -480,7 +480,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Events Per User"
     type: number
-    sql: (1.0 * ${current_period_total_events} / ${current_period_total_users}) ;;
+    sql:  ${current_period_total_events} / ${current_period_total_users} ;;
     value_format: "0.00"
 
   }
@@ -489,14 +489,14 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Events Per User"
     type: number
-    sql: (1.0 *${previous_period_total_events} / ${previous_period_total_users}) ;;
+    sql:  ${previous_period_total_events} / ${previous_period_total_users} ;;
     value_format: "0.00"
   }
 
   measure: events_per_user_pop_change {
     view_label: "Measures"
-    group_label: "Sessions Per User"
-    label: "Sessions Per User period-over-period % change"
+    group_label: "Events Per User"
+    label: "Events Per User period-over-period % change"
     type: number
     sql: (1.0 * ${current_period_events_per_user} / IFNULL(${previous_period_events_per_user} ,0)) - 1 ;;
     value_format: "0.00%"
@@ -504,7 +504,7 @@ view: audience_overview {
 
   measure: events_per_user_overall {
     view_label: "Measures"
-    group_label: "Sessions Per User"
+    group_label: "Events Per User"
     type: number
     sql: ${total_events_overall} / ${total_users_overall} ;;
   }
@@ -546,7 +546,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Pageviews Per User"
     type: sum
-    sql: 1.0 * (${current_period_pageviews}/${current_period_total_users});;
+    sql: ${current_period_pageviews}/${current_period_total_users};;
     value_format: "0.00"
   }
 
@@ -554,7 +554,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Pageviews Per User"
     type: sum
-    sql: 1.0 * (${previous_period_pageviews}/${previous_period_pageviews});;
+    sql: ${previous_period_pageviews}/${previous_period_pageviews};;
     value_format: "0.00"
   }
 
