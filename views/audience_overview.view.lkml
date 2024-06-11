@@ -685,7 +685,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Bounce Rate"
     type: number
-    sql: 1.0 * IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END), 0) / IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0) ;;
+    sql: IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END), 0) / IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0) ;;
     value_format: "0.00%"
   }
 
