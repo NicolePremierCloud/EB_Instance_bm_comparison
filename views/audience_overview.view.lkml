@@ -203,10 +203,7 @@ view: audience_overview {
     sql: ${TABLE}.source_medium;;
   }
 
-  dimension: Page_Path {
-    type: string
-    sql: ${TABLE}.pagepath;;
-  }
+
   dimension: Page_Title {
     type: string
     sql: ${TABLE}.pagetitle;;
@@ -230,9 +227,14 @@ view: audience_overview {
     sql: ${TABLE}.event_action;;
   }
 
-  dimension: eventlabel {
+  dimension: event_label {
     type: string
     sql: ${TABLE}.eventlabel;;
+  }
+  dimension: Page_Path {
+    type: string
+    sql: ${TABLE}.pagepath;;
+    drill_fields: [Page_Title,event_category,event_action,event_label]
   }
 
   dimension: user_type {
