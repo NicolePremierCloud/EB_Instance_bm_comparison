@@ -29,7 +29,7 @@ view: audience_overview {
         WHEN {% condition second_period_filter %} CAST(PARSE_DATE("%Y%m%d", date) AS TIMESTAMP) {% endcondition %}
         THEN 'Second Period'
       END AS audience_overview_period_selected,
-      ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
+      --ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
     FROM `eb-seo.102352566.ga_sessions_*` as ga_sessions,
     UNNEST(hits) as hits
     Where(      CASE
@@ -90,39 +90,39 @@ view: audience_overview {
 
   ## ------------------ START HIDDEN HELPER DIMENSIONS  ------------------ ##
 
-  #dimension: days_from_start_first {
-  #  view_label: "_PoP"
-  #  hidden: yes
-  #  type: number
-  #  sql: date_diff({% date_start first_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  #}
+  dimension: days_from_start_first {
+   view_label: "_PoP"
+    hidden: yes
+    type: number
+    sql: date_diff(CAST(${created_date} AS TIMESTAMP),{% date_start first_period_filter %} ,DAY) ;;
+  }
 
-  #dimension: days_from_start_second {
-  #  view_label: "_PoP"
-  #  hidden: yes
-  #  type: number
-  #  sql: date_diff({% date_start second_period_filter %}, CAST(${created_date} AS TIMESTAMP),DAY) ;;
-  #}
+  dimension: days_from_start_second {
+    view_label: "_PoP"
+    hidden: yes
+    type: number
+    sql: date_diff( CAST(${created_date} AS TIMESTAMP),{% date_start second_period_filter %},DAY) ;;
+  }
 
   ## ------------------ END HIDDEN HELPER DIMENSIONS  ------------------ ##
 
 
   ## ------------------ DIMENSIONS TO PLOT ------------------ ##
 
-  #dimension: days_from_first_period {
-  #  view_label: "_PoP"
-  #  description: "Select for Grouping (Rows)"
-  #  group_label: "Arbitrary Period Comparisons"
-  #  type: number
-  #  hidden: yes
-  #  sql:
-  #          CASE
-  #          WHEN ${days_from_start_second} >= 0
-  #          THEN ${days_from_start_second}
-  #          WHEN ${days_from_start_first} >= 0
-  #          THEN ${days_from_start_first}
-  #          END;;
-  #}
+  dimension: days_from_first_period {
+    view_label: "_PoP"
+    description: "Select for Grouping (Rows)"
+    group_label: "Arbitrary Period Comparisons"
+    type: number
+    hidden: no
+    sql:
+            CASE
+            WHEN ${days_from_start_second} >= 0
+           THEN ${days_from_start_second}
+           WHEN ${days_from_start_first} >= 0
+            THEN ${days_from_start_first}
+            END;;
+  }
 
 
   dimension: period_selected {
@@ -134,12 +134,6 @@ view: audience_overview {
     sql: ${TABLE}.audience_overview_period_selected;;
   }
 
-
-  #dimension: day_index {
-  #  type: number
-  #  view_label: "Date_Axis"
-  #  sql: Row_number() over(partition by ${period_selected} order by ${date} asc) ;;
-  #}
 
   ## ------------------ END DIMENSIONS TO PLOT ------------------ ##
 
