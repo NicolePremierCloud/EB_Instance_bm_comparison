@@ -29,7 +29,7 @@ view: audience_overview {
         WHEN {% condition second_period_filter %} CAST(PARSE_DATE("%Y%m%d", date) AS TIMESTAMP) {% endcondition %}
         THEN 'Second Period'
       END AS audience_overview_period_selected,
-      --ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
+      ROW_NUMBER() OVER(PARTITION BY Concat(visitid,visitstarttime,fullvisitorid) ORDER BY Concat(visitid,visitstarttime,fullvisitorid)) as rn,
     FROM `eb-seo.102352566.ga_sessions_*` as ga_sessions,
     UNNEST(hits) as hits
     Where(      CASE
