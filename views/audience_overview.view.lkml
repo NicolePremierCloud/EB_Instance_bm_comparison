@@ -766,7 +766,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Avg. Engagement Time"
     type: number
-    sql: (1.0 * timeonsite_overall / IFNULL(Case when ${sessions_overall}=0 then 1 else ${sessions_overall} end, 1))/86400 ;;
+    sql: (1.0 * ${timeonsite_overall} / IFNULL(Case when ${sessions_overall}=0 then 1 else ${sessions_overall} end, 1))/86400 ;;
     value_format: "hh:mm:ss"
   }
 
