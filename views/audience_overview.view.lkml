@@ -652,6 +652,12 @@ view: audience_overview {
     filters: [period_selected: "Second Period"]
   }
 
+  measure: timeonsite_overall {
+    hidden: yes
+    type:  sum
+    sql:  CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END;;
+  }
+
 
   measure: previous_period_visits {
     hidden: yes
@@ -760,7 +766,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Avg. Engagement Time"
     type: number
-    sql: FLOOR(SUM(CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END) / IFNULL(${sessions_overall}, 0)/86400) ;;
+    sql: 1.0 * timeonsite_overall / IFNULL(Case when ${sessions_overall}=0 then 1 else ${sessions_overall} end, 1)/86400) ;;
     value_format: "hh:mm:ss"
   }
 
