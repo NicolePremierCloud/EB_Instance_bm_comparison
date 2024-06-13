@@ -7,5 +7,5 @@ include: "/views/*.view.lkml"                # include all views in the views/ f
 explore: audience_overview{
   label: "audience overview_comparison"
   always_filter: {
-    filters: [first_period_filter: "NOT NULL", second_period_filter: "NOT NULL"]
+    filters: [first_period_filter: "1 days", second_period_filter: "1 days"]
   }}
