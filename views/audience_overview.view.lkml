@@ -451,7 +451,7 @@ view: audience_overview {
     group_label: "Sessions Per User"
     type: number
     sql: ${current_period_sessions} / (Case when ${current_period_total_users}=0 then 1 else ${current_period_total_users} end) ;;
-    value_format: "[>3]\">300%\";0.00%"
+    value_format: "0.00"
 
   }
 
