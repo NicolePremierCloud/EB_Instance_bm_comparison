@@ -56,7 +56,7 @@ view: audience_overview {
     END) is not null
 
 
-           ;;
+      ;;
   }
 
   dimension_group: created {
@@ -105,7 +105,7 @@ view: audience_overview {
   ## ------------------ START HIDDEN HELPER DIMENSIONS  ------------------ ##
 
   dimension: days_from_start_first {
-   view_label: "_PoP"
+    view_label: "_PoP"
     hidden: yes
     type: number
     sql: date_diff(CAST(${created_date} AS TIMESTAMP),{% date_start first_period_filter %} ,DAY) ;;
@@ -285,30 +285,30 @@ view: audience_overview {
 
 # Measures
 
-   measure: current_period_total_users {
-     view_label: "Measures"
-     group_label: "Total Users"
-     type: count_distinct
-     sql: ${UserID};;
-     filters: [period_selected: "Second Period"]
-   }
-
-   measure: previous_period_total_users {
-     view_label: "Measures"
-     group_label: "Total Users"
+  measure: current_period_total_users {
+    view_label: "Measures"
+    group_label: "Total Users"
     type: count_distinct
-     sql: ${UserID};;
-     filters: [period_selected: "First Period"]
-   }
+    sql: ${UserID};;
+    filters: [period_selected: "Second Period"]
+  }
 
-   measure: total_users_pop_change {
-     view_label: "Measures"
-     group_label: "Total Users"
-     label: "Total Users period-over-period % change"
-     type: number
-     sql: (1.0 * ${current_period_total_users} / IFNULL(${previous_period_total_users} ,0)) - 1 ;;
-     value_format: "0.00%"
-   }
+  measure: previous_period_total_users {
+    view_label: "Measures"
+    group_label: "Total Users"
+    type: count_distinct
+    sql: ${UserID};;
+    filters: [period_selected: "First Period"]
+  }
+
+  measure: total_users_pop_change {
+    view_label: "Measures"
+    group_label: "Total Users"
+    label: "Total Users period-over-period % change"
+    type: number
+    sql: (1.0 * ${current_period_total_users} / IFNULL((Case when${previous_period_total_users}=0 then 1 else ${previous_period_total_users} END) ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
+  }
 
   measure: total_users_overall {
     view_label: "Measures"
@@ -317,61 +317,61 @@ view: audience_overview {
     sql: ${UserID};;
   }
 
-   measure: current_period_pct_total_users {
-     view_label: "Measures"
-     group_label: "% Total Users"
-     type: count_distinct
-     sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
-     filters: [period_selected: "Second Period"]
-   }
+  measure: current_period_pct_total_users {
+    view_label: "Measures"
+    group_label: "% Total Users"
+    type: count_distinct
+    sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
+    filters: [period_selected: "Second Period"]
+  }
 
-   measure: previous_period_pct_total_users {
-     view_label: "Measures"
-     group_label: "% Total Users"
-     type: count_distinct
-     sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
-     filters: [period_selected: "First Period"]
-   }
+  measure: previous_period_pct_total_users {
+    view_label: "Measures"
+    group_label: "% Total Users"
+    type: count_distinct
+    sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
+    filters: [period_selected: "First Period"]
+  }
 
-   measure: pct_total_users_pop_change {
-     view_label: "Measures"
-     group_label: "% Total Users"
-     label: "% Total Users period-over-period % change"
-     type: number
-     sql: (1.0 * ${current_period_pct_total_users} / IFNULL(${previous_period_pct_total_users} ,0)) - 1 ;;
-     value_format: "0.00%"
-   }
+  measure: pct_total_users_pop_change {
+    view_label: "Measures"
+    group_label: "% Total Users"
+    label: "% Total Users period-over-period % change"
+    type: number
+    sql: (1.0 * ${current_period_pct_total_users} / IFNULL(Case when ${previous_period_pct_total_users}=0 then 1 else ${previous_period_pct_total_users} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
+  }
 
-   measure: pct_total_users_overall {
-     view_label: "Measures"
-     group_label: "% Total Users"
-     type: number
-     sql: COUNT(DISTINCT CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END);;
-   }
+  measure: pct_total_users_overall {
+    view_label: "Measures"
+    group_label: "% Total Users"
+    type: number
+    sql: COUNT(DISTINCT CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END);;
+  }
 
-   measure: current_period_new_users {
-     view_label: "Measures"
-     group_label: "New Users"
-     type: count_distinct
-     sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
-     filters: [period_selected: "Second Period"]
-   }
+  measure: current_period_new_users {
+    view_label: "Measures"
+    group_label: "New Users"
+    type: count_distinct
+    sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
+    filters: [period_selected: "Second Period"]
+  }
 
-   measure: previous_period_new_users {
-     view_label: "Measures"
-     group_label: "New Users"
-     type: count_distinct
-     sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
-     filters: [period_selected: "First Period"]
-   }
+  measure: previous_period_new_users {
+    view_label: "Measures"
+    group_label: "New Users"
+    type: count_distinct
+    sql: CASE WHEN ${visitNumber} = 1 THEN ${UserID} ELSE NULL END;;
+    filters: [period_selected: "First Period"]
+  }
 
   measure: new_users_pop_change {
     view_label: "Measures"
     group_label: "New Users"
     label: "New Users period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_new_users} / IFNULL(${previous_period_new_users} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_new_users} / IFNULL(Case when ${previous_period_new_users}=0 then 1 else ${previous_period_new_users} end  ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: new_users_overall {
@@ -402,8 +402,8 @@ view: audience_overview {
     group_label: "Sessions"
     label: "Sessions period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_sessions} / IFNULL(${previous_period_sessions} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_sessions} / IFNULL(Case when ${previous_period_sessions}=0 then 1 else ${previous_period_sessions} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: sessions_overall {
@@ -435,8 +435,8 @@ view: audience_overview {
     group_label: "Total Events"
     label: "Total Events period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_total_events} / IFNULL(${previous_period_total_events} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_total_events} / IFNULL(Case when ${previous_period_total_events}=0 then 1 else ${previous_period_total_events} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: total_events_overall {
@@ -450,8 +450,8 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Sessions Per User"
     type: number
-    sql: ${current_period_sessions} / ${current_period_total_users} ;;
-    value_format: "0.00"
+    sql: ${current_period_sessions} / (Case when ${current_period_total_users}=0 then 1 else ${current_period_total_users} end) ;;
+    value_format: "[>3]\">300%\";0.00%"
 
   }
 
@@ -468,8 +468,8 @@ view: audience_overview {
     group_label: "Sessions Per User"
     label: "Sessions Per User period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_sessions_per_user} / IFNULL(${previous_period_sessions_per_user} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_sessions_per_user} / IFNULL(Case when ${previous_period_sessions_per_user}=0 then 1 else ${previous_period_sessions_per_user} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: sessions_per_user_overall {
@@ -484,7 +484,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Events Per User"
     type: number
-    sql:  ${current_period_total_events} / ${current_period_total_users} ;;
+    sql:  ${current_period_total_events} / (Case when ${current_period_total_users}=0 then 1 else ${current_period_total_users} end) ;;
     value_format: "0.00"
 
   }
@@ -493,7 +493,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Events Per User"
     type: number
-    sql:  ${previous_period_total_events} / ${previous_period_total_users} ;;
+    sql:  ${previous_period_total_events} / (Case when ${previous_period_total_users}=0 then 1 else ${previous_period_total_users} end) ;;
     value_format: "0.00"
   }
 
@@ -502,15 +502,16 @@ view: audience_overview {
     group_label: "Events Per User"
     label: "Events Per User period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_events_per_user} / IFNULL(${previous_period_events_per_user} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_events_per_user} / IFNULL(${previous_period_events_per_user} ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: events_per_user_overall {
     view_label: "Measures"
     group_label: "Events Per User"
     type: number
-    sql: ${total_events_overall} / ${total_users_overall} ;;
+    sql: IFNULL(${total_events_overall} / ${total_users_overall},0) ;;
+    value_format: "0.00"
   }
 
   measure: current_period_pageviews {
@@ -534,8 +535,8 @@ view: audience_overview {
     group_label: "Pageviews"
     label: "Pageviews period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_pageviews} / IFNULL(${previous_period_pageviews} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_pageviews} / IFNULL(Case when ${previous_period_pageviews}=0 then 1 else  ${previous_period_pageviews} END,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: pageviews_overall {
@@ -549,16 +550,16 @@ view: audience_overview {
   measure: current_period_pageviews_per_user {
     view_label: "Measures"
     group_label: "Pageviews Per User"
-    type: sum
-    sql: ${current_period_pageviews}/${current_period_total_users};;
+    type: number
+    sql: ${current_period_pageviews}/(Case when ${current_period_total_users}=0 then 1 else ${current_period_total_users} END);;
     value_format: "0.00"
   }
 
   measure: previous_period_pageviews_per_user {
     view_label: "Measures"
     group_label: "Pageviews Per User"
-    type: sum
-    sql: ${previous_period_pageviews}/${previous_period_pageviews};;
+    type: number
+    sql: ${previous_period_pageviews}/(Case when ${previous_period_pageviews}=0 then 1 else ${previous_period_pageviews} END);;
     value_format: "0.00"
   }
 
@@ -567,8 +568,8 @@ view: audience_overview {
     group_label: "Pageviews Per User"
     label: "Pageviews period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_pageviews_per_user} / IFNULL(${previous_period_pageviews_per_user} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_pageviews_per_user} / IFNULL(Case when ${previous_period_pageviews_per_user}=0 then 1 else ${previous_period_pageviews_per_user} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: pageviews_per_user_overall {
@@ -601,8 +602,8 @@ view: audience_overview {
     group_label: "Pages Per Session"
     label: "Pages Per Session period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_pages_per_session} / IFNULL(${previous_period_pages_per_session} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_pages_per_session} / IFNULL(Case when ${previous_period_pages_per_session}=0 then 1 else  ${previous_period_pages_per_session} end,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: pages_per_session_overall {
@@ -664,16 +665,16 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Bounce Rate"
     type: number
-    sql: 1.0 * ${current_period_bounces} / ${current_period_visits} ;;
-    value_format: "0.00%"
+    sql: 1.0 * ${current_period_bounces} / (Case when ${current_period_visits}=0 then 1 else ${current_period_visits} end) ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: previous_period_bounce_rate {
     view_label: "Measures"
     group_label: "Bounce Rate"
     type: number
-    sql: 1.0 * ${previous_period_bounces} / ${previous_period_visits} ;;
-    value_format: "0.00%"
+    sql: 1.0 * ${previous_period_bounces} / (Case when ${previous_period_visits}=0 then 1 else ${previous_period_visits} END) ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: bounce_rate_pop_change {
@@ -681,23 +682,23 @@ view: audience_overview {
     group_label: "Bounce Rate"
     label: "Bounce Rate period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_bounce_rate} / IFNULL(${previous_period_bounce_rate} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_bounce_rate} / IFNULL(${previous_period_bounce_rate} ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: bounce_rate_overall {
     view_label: "Measures"
     group_label: "Bounce Rate"
     type: number
-    sql: IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END) / SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0) ;;
-    value_format: "0.00%"
+    sql: IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${bounces} ELSE 0 END) / (Case when SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END)>0 then SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END) else 1 END), 0) ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: current_period_eng_time_per_session {
     view_label: "Measures"
     group_label: "Eng. Time Per Session"
     type: number
-    sql: (IFNULL(${current_period_timeonsite}, 0) / ${current_period_visits})/ 86400 ;;
+    sql: (IFNULL(${current_period_timeonsite}, 0) / Case when ${current_period_visits}=0 then 1 else ${current_period_visits} end)/ 86400 ;;
     value_format: "hh:mm:ss"
   }
 
@@ -705,7 +706,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Eng. Time Per Session"
     type: number
-    sql: (IFNULL( ${previous_period_timeonsite}, 0) / IFNULL(${previous_period_visits}, 0))/ 86400 ;;
+    sql: (IFNULL( ${previous_period_timeonsite}, 0) / IFNULL(Case when ${previous_period_visits}=0 then 1 else ${previous_period_visits} end, 1))/ 86400 ;;
     value_format: "hh:mm:ss"
 
   }
@@ -715,15 +716,15 @@ view: audience_overview {
     group_label: "Eng. Time Per Session"
     label: "Eng. Time Per Session period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_eng_time_per_session} / IFNULL(${previous_period_eng_time_per_session} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_eng_time_per_session} / IFNULL(Case when ${previous_period_eng_time_per_session}=0 then 1 else ${previous_period_eng_time_per_session} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
   measure: eng_time_per_session_overall {
     view_label: "Measures"
     group_label: "Eng. Time Per Session"
     type: number
-    sql: FLOOR(IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END), 0) / IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 0)) ;;
+    sql: FLOOR(IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END), 0) / IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${visits} ELSE 0 END), 1)) ;;
     value_format: "hh:mm:ss"
   }
 
@@ -732,7 +733,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Avg. Engagement Time"
     type: number
-    sql: (IFNULL(${current_period_timeonsite}, 0) / ${current_period_sessions})/ 86400 ;;
+    sql: (IFNULL(${current_period_timeonsite}, 0) / (Case when ${current_period_sessions}=0 then 1 else ${current_period_sessions} END))/ 86400 ;;
     value_format: "hh:mm:ss"
   }
 
@@ -740,7 +741,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Avg. Engagement Time"
     type: number
-    sql: (IFNULL( ${previous_period_timeonsite}, 0) / IFNULL(${previous_period_sessions}, 0))/ 86400 ;;
+    sql: (IFNULL( ${previous_period_timeonsite}, 0) / (Case when ${previous_period_sessions}=0 then 1 else ${previous_period_sessions} END))/ 86400 ;;
     value_format: "hh:mm:ss"
 
   }
@@ -750,8 +751,8 @@ view: audience_overview {
     group_label: "Avg. Engagement Time"
     label: "Avg. Engagement Time period-over-period % change"
     type: number
-    sql: (1.0 * ${current_period_Avg_Engagemet_Time} / IFNULL(${previous_period_Avg_Engagemet_Time} ,0)) - 1 ;;
-    value_format: "0.00%"
+    sql: (1.0 * ${current_period_Avg_Engagemet_Time} / IFNULL(Case when ${previous_period_Avg_Engagemet_Time}=0 then 1 else ${previous_period_Avg_Engagemet_Time} end ,1)) - 1 ;;
+    value_format: "[>3]\">300%\";0.00%"
   }
 
 
@@ -759,7 +760,7 @@ view: audience_overview {
     view_label: "Measures"
     group_label: "Avg. Engagement Time"
     type: number
-    sql: FLOOR(IFNULL(SUM(CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END), 0) / ${sessions_overall}, 0)/86400) ;;
+    sql: FLOOR(SUM(CASE WHEN ${rn} = 1 THEN ${timeonsite} ELSE 0 END) / IFNULL(${sessions_overall}, 0)/86400) ;;
     value_format: "hh:mm:ss"
   }
 
