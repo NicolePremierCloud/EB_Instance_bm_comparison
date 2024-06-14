@@ -22,6 +22,24 @@ view: audience_overview {
       hits.eventinfo.EventAction as event_action,
       hits.eventinfo.eventlabel as event_label,
       Concat(visitid,visitstarttime,fullvisitorid) as sessionID,
+      date_diff(CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP),{% date_start first_period_filter %} ,DAY) as days_from_start_first,
+      date_diff( CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP),{% date_start second_period_filter %},DAY) as days_from_start_second,
+      CASE
+          WHEN (
+              {% condition first_period_filter %} CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP) {% endcondition %}
+          ) THEN CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP)
+          WHEN (
+              {% condition second_period_filter %} CAST(PARSE_DATE("%Y%m%d", date) AS TIMESTAMP) {% endcondition %}
+          ) THEN TIMESTAMP_SUB(
+              CAST(PARSE_DATE("%Y%m%d", SUBSTR(_TABLE_SUFFIX, -8)) AS TIMESTAMP),
+              INTERVAL DATE_DIFF(
+                  {% date_start second_period_filter %},
+                  {% date_start first_period_filter %},
+                  DAY
+              ) DAY
+          )
+      END AS date_x_axis,
+
       (SELECT
             MAX(
               CASE
@@ -108,14 +126,23 @@ view: audience_overview {
     view_label: "_PoP"
     hidden: yes
     type: number
-    sql: date_diff(CAST(${created_date} AS TIMESTAMP),{% date_start first_period_filter %} ,DAY) ;;
+    sql: ${TABLE}.days_from_start_first ;;
   }
 
   dimension: days_from_start_second {
     view_label: "_PoP"
     hidden: yes
     type: number
-    sql: date_diff( CAST(${created_date} AS TIMESTAMP),{% date_start second_period_filter %},DAY) ;;
+    sql: ${TABLE}.days_from_start_second ;;
+  }
+
+  dimension: date_x_axis {
+    view_label: "_PoP"
+    description: "Select for Grouping (Rows)"
+    group_label: "Arbitrary Period Comparisons"
+    hidden: no
+    type: date
+    sql: ${TABLE}.date_x_axis ;;
   }
 
   ## ------------------ END HIDDEN HELPER DIMENSIONS  ------------------ ##
@@ -128,7 +155,7 @@ view: audience_overview {
     description: "Select for Grouping (Rows)"
     group_label: "Arbitrary Period Comparisons"
     type: number
-    hidden: no
+    hidden: yes
     sql:
             CASE
             WHEN ${days_from_start_second} >= 0
